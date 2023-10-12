@@ -29,7 +29,7 @@
     "rsocket-core": "^1.0.0-alpha.3",
     "rsocket-messaging": "^1.0.0-alpha.3",
     "rxjs": "^7.8.1",
-    "wasmrs-js": "^0.2.3"
+    "wasmrs-js": "^0.2.4"
   },
   "devDependencies": {
     "@types/debug": "^4.1.9",
