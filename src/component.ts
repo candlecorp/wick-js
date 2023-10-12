@@ -90,7 +90,6 @@ export class WasmRsComponent {
         keepAlive: 10000,
         lifetime: 20 * 1000,
       },
-      // transport: makeWasmTransport(instance),
       transport: makeWorkerTransport(mod, opts.workerUrl, opts.wasi),
     });
 
@@ -98,8 +97,30 @@ export class WasmRsComponent {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static async FromResponse(response: Response): Promise<WasmRsComponent> {
-    throw new Error('Not yet implemented');
+  static async FromResponse(
+    response: Response,
+    opts: WasmRsOptions
+  ): Promise<WasmRsComponent> {
+    const mod = await WasmRsModule.compileStreaming(response);
+    let limitedWasi: WasiOptions | undefined;
+    if (opts.wasi) {
+      limitedWasi = {
+        version: opts.wasi.version,
+        stdin: opts.wasi.stdin,
+        stdout: opts.wasi.stdout,
+        stderr: opts.wasi.stderr,
+      };
+    }
+    const instance = await mod.instantiate({ wasi: limitedWasi });
+    const connector = new RSocketConnector({
+      setup: {
+        keepAlive: 10000,
+        lifetime: 20 * 1000,
+      },
+      transport: makeWorkerTransport(mod, opts.workerUrl, opts.wasi),
+    });
+
+    return new WasmRsComponent(instance, await connector.connect());
   }
 
   terminate(): void {
