@@ -9,7 +9,6 @@ export class MessagePackCodec implements Codec<unknown> {
   }
 
   encode(entity: unknown): Buffer {
-    console.log({ entity });
     return Buffer.from(encode(entity));
   }
 }

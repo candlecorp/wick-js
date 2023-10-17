@@ -18,7 +18,6 @@ export class ContextPacket implements IntoPayload {
     this.packet.setContext(this.context);
     const payload = this.packet.intoPayload();
     payload.metadata?.set(this.operation.asEncoded(), 4);
-    console.log({ context_metadata: payload.metadata });
     debug('context packet %o', payload);
     return payload;
   }
@@ -62,7 +61,7 @@ export class Packet implements IntoPayload {
       debug('packet context %o', this.context);
       contextBytes = encode(this.context);
     }
-    const wickMetadata = new WickMetadata(0, this.port, contextBytes);
+    const wickMetadata = new WickMetadata(this.flags, this.port, contextBytes);
     const wickMetadataBytes = wickMetadata.encode();
     const metadata = new Uint8Array(4 + 8 + wickMetadataBytes.length);
     let index = 0;
@@ -73,8 +72,9 @@ export class Packet implements IntoPayload {
     index += 8;
     metadata.set(wickMetadataBytes, index);
     debug('packet metadata %o', metadata);
+    const data = this.data ? Buffer.from(this.data) : null;
     return {
-      data: this.data ? Buffer.from(this.data) : undefined,
+      data,
       metadata: Buffer.from(metadata),
     };
   }
