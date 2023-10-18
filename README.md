@@ -1,3 +1,18 @@
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" width="50%" srcset="https://github.com/candlecorp/.github/blob/main/assets/wick_logo_light@.5.png?raw=true">
+    <img alt="wick logo" width="50%" src="https://github.com/candlecorp/.github/blob/main/assets/wick_logo.png@.5.png?raw=true">
+  </picture>
+
+  <p align="center">
+    A functional-reactive framework for WebAssembly components that run on the server and client.
+  </p>
+</div>
+
+
+
 # wick-js
 
 JavaScript implementation of a Wick host to run WebAssembly components.
