@@ -45,7 +45,7 @@ $ npm install @candlecorp/wick
 ## Usage 
 
 Usage involves delegating to a worker to avoid holding up the main thread. The `wasmrs-js` package includes [ready-made workers](https://unpkg.com/browse/wasmrs-js@0.2.4/dist/) 
-or you can create your own from the module files themselves if it works better for your environment. It can be as simple as a one-liner to make your own worker in your UI framework of choice ([example](https://github.com/candlecorp/build-once-run-anywhere/blob/main/ui/src/lib/component-worker.js)).
+or you can create your own from the module files themselves if it works better for your environment. It can be as simple as a one-liner to make your own worker in your UI framework of choice ([example](https://github.com/candlecorp/wasm.candle.dev/blob/main/ui/src/lib/component-worker.js)).
 
 ```ts
 import { from } from 'rxjs';
