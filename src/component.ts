@@ -20,7 +20,7 @@ import {
   Payload,
   ClientTransport,
 } from 'rsocket-core';
-import { RxRequestersFactory } from '@candlecorp/rsocket-adapter-rxjs';
+import * as rx from '@candlecorp/rsocket-adapter-rxjs';
 import { MESSAGEPACK_CODEC } from './codec.js';
 import { debug } from './debug.js';
 import { wasi } from 'wasmrs-js';
@@ -223,7 +223,7 @@ export class WasmRsComponentInstance implements Invokable {
       )
     );
 
-    const request = RxRequestersFactory.requestChannelRaw(payloads);
+    const request = rx.RxRequestersFactory.requestChannelRaw(payloads);
     return request(this.component.rsocket()).pipe(
       map((v) => {
         let md = undefined;
