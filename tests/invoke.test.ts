@@ -41,6 +41,9 @@ describe('wick impl', () => {
       wasi: wasiOpts,
     });
     console.log(component.operations);
+    expect(component.operations.exports.length).toBe(
+      component.signature.operations.length + 1
+    );
 
     const instance = await component.instantiate({
       config: { default_err: 'test err' },

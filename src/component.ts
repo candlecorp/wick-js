@@ -25,6 +25,7 @@ import { MESSAGEPACK_CODEC } from './codec.js';
 import { debug } from './debug.js';
 import { wasi } from 'wasmrs-js';
 import { WasiOptions } from 'wasmrs-js/dist/src/wasi.js';
+import { Signature, decodeClaims } from './claims.js';
 
 export interface WasmRsOptions {
   wasi?: wasi.WasiOptions;
@@ -51,8 +52,36 @@ function makeWorkerTransport(
   });
 }
 
+function extractSignature(mod: WasmRsModule): Signature {
+  const customSection = mod.customSection('wick/claims@v1');
+  try {
+    const claims = decodeClaims(customSection[0]);
+    return claims.wascap.interface;
+  } catch (e) {
+    console.warn(
+      'failed to decode claims, this will be an error in the future',
+      e
+    );
+    return {
+      name: 'unknown',
+      format: -1,
+      metadata: {
+        version: 'unknown',
+      },
+      operations: [],
+    };
+  }
+}
+
 export class WasmRsComponent {
-  constructor(private instance: WasmRsInstance, private connection: RSocket) {}
+  readonly signature: Signature;
+  constructor(
+    private instance: WasmRsInstance,
+    signature: Signature,
+    private connection: RSocket
+  ) {
+    this.signature = signature;
+  }
 
   get operations(): OperationList {
     return this.instance.operations;
@@ -75,6 +104,8 @@ export class WasmRsComponent {
     opts: WasmRsOptions
   ): Promise<WasmRsComponent> {
     const mod = await WasmRsModule.compile(bytes);
+    const signature = extractSignature(mod);
+
     let limitedWasi: WasiOptions | undefined;
     if (opts.wasi) {
       limitedWasi = {
@@ -93,7 +124,7 @@ export class WasmRsComponent {
       transport: makeWorkerTransport(mod, opts.workerUrl, opts.wasi),
     });
 
-    return new WasmRsComponent(instance, await connector.connect());
+    return new WasmRsComponent(instance, signature, await connector.connect());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -102,6 +133,8 @@ export class WasmRsComponent {
     opts: WasmRsOptions
   ): Promise<WasmRsComponent> {
     const mod = await WasmRsModule.compileStreaming(response);
+    const signature = extractSignature(mod);
+
     let limitedWasi: WasiOptions | undefined;
     if (opts.wasi) {
       limitedWasi = {
@@ -120,7 +153,7 @@ export class WasmRsComponent {
       transport: makeWorkerTransport(mod, opts.workerUrl, opts.wasi),
     });
 
-    return new WasmRsComponent(instance, await connector.connect());
+    return new WasmRsComponent(instance, signature, await connector.connect());
   }
 
   terminate(): void {
