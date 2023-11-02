@@ -2,7 +2,7 @@
   "name": "@candlecorp/wick",
   "description": "A JavaScript implementation of a Wick host to run WebAssembly and wick components in JavaScript environments",
   "license": "Apache-2.0",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "scripts": {
     "prepublish": "npm run build",
     "test": "NODE_OPTIONS=--experimental-vm-modules DEBUG='wick*,wasmrs*' jest --coverage --detectOpenHandles",
